@@ -1,0 +1,57 @@
+﻿@using BlazeAppParty.Services
+@inject AppState AppState
+
+@if (show_value) {
+    <MudStack Row="true" Justify="Justify.Center">
+        <MudButton OnClick="@(() => show_value = !show_value)" FullWidth="false">
+            <MudText Typo="bigBoardButton" Style="font-weight:bold" Color="Color.Warning">@score_value</MudText>
+        </MudButton>
+    </MudStack>
+}
+else {
+    <MudStack Row="true" Justify="Justify.Center">
+        <MudToggleIconButton Toggled="@TeamAToggled" ToggledChanged="UpdateTeamA" Disabled="@TeamBToggled">
+            <MudText Typo="bigBoardToggle" Style="@aStyle">A</MudText>
+        </MudToggleIconButton>
+        <MudToggleIconButton Toggled="@TeamBToggled" ToggledChanged="UpdateTeamB" Disabled="@TeamAToggled">
+            <MudText Typo="bigBoardToggle" Style="@bStyle">B</MudText>
+        </MudToggleIconButton>
+    </MudStack>
+}
+
+@code {
+    [Parameter]
+    public int score_value { get; set; }
+
+    private bool show_value { get; set; } = true;
+    private Typo bigBoardButton => AppState.Categories.Count > 6 ? Typo.h3 : Typo.h2;
+    private Typo bigBoardToggle => AppState.Categories.Count > 6 ? Typo.h4 : Typo.h3;
+
+    private string aStyle => TeamAToggled ? $"color:{Colors.Orange.Default}; font-weight:bold" : 
+                             TeamBToggled ? $"color:{Colors.Blue.Lighten1};  font-weight:bold" : $"color:{Colors.Blue.Lighten5}; font-weight:bold";
+
+    private string bStyle => TeamBToggled ? $"color:{Colors.Orange.Default}; font-weight:bold" : 
+                             TeamAToggled ? $"color:{Colors.Blue.Lighten1};  font-weight:bold" : $"color:{Colors.Blue.Lighten5}; font-weight:bold";
+
+    private bool TeamAToggled { get; set; }
+    private bool TeamBToggled { get; set; }
+
+    private void UpdateTeamA(bool toggled) {
+        TeamAToggled = toggled;
+        AppState.TeamAScore += toggled ? score_value : -score_value;
+    }
+
+    private void UpdateTeamB(bool toggled) {
+        TeamBToggled = toggled;
+        AppState.TeamBScore += toggled ? score_value : -score_value;
+    }
+
+    protected override void OnInitialized() {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    public void Dispose() {
+        AppState.OnChange -= StateHasChanged;
+    }
+}
+

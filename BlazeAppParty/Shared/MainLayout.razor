@@ -1,0 +1,43 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider Theme="JPartyTheme" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+        Blaze App Party
+    </MudAppBar>
+    <MudDrawer @bind-Open="@_drawerOpen">
+    @*<MudDrawer @bind-Open="@_drawerOpen" Style="background-color:royalblue">*@
+        <NavMenu />
+    </MudDrawer>
+
+    <MudMainContent Style="min-height:100vh; background-color:royalblue">
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    bool _drawerOpen = false;
+
+    void DrawerToggle() {
+        _drawerOpen = !_drawerOpen;
+    }
+
+    MudTheme JPartyTheme = new MudTheme() {
+            Palette = new Palette() {
+                TextSecondary = Colors.Shades.White,
+                TextPrimary = Colors.Shades.White,
+                DrawerBackground = "#594ae2ff"
+             },
+            LayoutProperties = new LayoutProperties() {
+                DrawerWidthLeft = "260px",
+                DrawerWidthRight = "300px"
+            }
+        };
+}
+

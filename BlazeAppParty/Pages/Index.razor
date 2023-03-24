@@ -1,0 +1,49 @@
+﻿@using BlazeAppParty.Components
+@using BlazeAppParty.Services
+@inject AppState AppState
+@page "/"
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge">
+    @* categories *@
+    <MudGrid Class="mt-5" Justify="Justify.SpaceBetween">
+        @foreach (var c in AppState.Categories) {
+            <MudItem xs="gridSize">
+                <MudText Typo="Typo.h4" Align="Align.Center">@c</MudText>
+            </MudItem>
+        }
+    </MudGrid>
+
+    @* game board *@
+    @for (var r = 1; r <= AppState.Questions; r++) {
+        var score_value = 200 * r;
+        <MudGrid Class="mt-5" Justify="Justify.SpaceBetween">
+            @for (var q = 0; q < AppState.Categories.Count(); q++) {
+            <MudItem xs="gridSize">
+                <ToggleButtonCell score_value=score_value />
+            </MudItem>
+            }
+        </MudGrid>
+    }
+
+    <MudStack Row="true" Justify="Justify.SpaceAround" Class="mt-5">
+        <MudText Typo="Typo.h3" Style="font-weight:bold">Team A:</MudText>
+        <MudText Typo="Typo.h3" Style="font-weight:bold">@AppState.TeamAScore</MudText>
+        <MudText Typo="Typo.h3" Style="font-weight:bold">Team B:</MudText>
+        <MudText Typo="Typo.h3" Style="font-weight:bold">@AppState.TeamBScore</MudText>
+    </MudStack>
+
+</MudContainer>
+
+
+@code {
+
+    int gridSize => AppState.Categories.Count() <= 6 ? 2 : 1;
+    protected override void OnInitialized() {
+        AppState.OnChange += StateHasChanged;
+    }
+
+    public void Dispose() {
+        AppState.OnChange -= StateHasChanged;
+    }
+}
+

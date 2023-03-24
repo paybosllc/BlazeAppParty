@@ -1,0 +1,57 @@
+﻿@using BlazeAppParty.Services
+@page "/settings"
+@inject AppState AppState
+
+<MudContainer MaxWidth="MaxWidth.Small">
+
+    <PageTitle>Settings</PageTitle>
+
+    <MudText Typo="Typo.h4" Class="mt-5">Questions</MudText>
+    <MudSelect T="int" @bind-Value="@AppState.Questions" >
+        <MudSelectItem T="int" Value="4" Style="color:black"/>
+        <MudSelectItem T="int" Value="5" Style="color:black"/>
+        <MudSelectItem T="int" Value="6" Style="color:black"/>
+    </MudSelect>
+
+    <MudText Typo="Typo.h4" Class="mt-5">Categories</MudText>
+
+    @for (var i = 0; i < AppState.Categories.Count(); i++) {
+        var index = i;
+        <MudTextField Value="@AppState.Categories[i]" ValueChanged="@((string s) => OnValueChanged(s, index))" Variant="Variant.Text" MaxLength="64" FullWidth="false"></MudTextField>
+    }
+
+    <MudStack Row="true">
+        <MudButton Class="mt-5" OnClick="AddCategory">
+            <MudText Typo="Typo.h4">+</MudText>
+        </MudButton>
+        <MudButton Class="mt-5" OnClick="RemoveCategory">
+            <MudText Typo="Typo.h4">-</MudText>
+        </MudButton>
+    </MudStack>
+
+</MudContainer>
+
+@code {
+    private void OnValueChanged(string s, int i) {
+        AppState.Categories[i] = s;
+    }
+
+    private void AddCategory() {
+        string title = $"Title {AppState.Categories.Count() + 1}";
+        AppState.Categories.Add(title);
+    }
+
+    private void RemoveCategory() {
+        AppState.Categories.RemoveAt(AppState.Categories.Count() - 1);
+    }
+
+    protected override void OnInitialized() {
+        AppState.OnChange += StateHasChanged;
+        AppState.TeamAScore = 0;
+        AppState.TeamBScore = 0;
+    }
+
+    public void Dispose() {
+        AppState.OnChange -= StateHasChanged;
+    }
+}
